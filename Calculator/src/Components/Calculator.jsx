@@ -5,11 +5,11 @@ import Buttons from './Buttons'
 const Calculator = () => {
   return (
     <div>
-        <div className='bg-gray-900 rounded-lg h-130 w-100 p-5'>
-            <div>
+        <div className='bg-[#010101] rounded-lg h-130 w-90 p-5'>
+            <div className='mb-5'>
                 <InputNum/>
             </div>
-            <div className='h-75 mt-10'>
+            <div>
                 <Buttons/>
             </div>
         </div>
