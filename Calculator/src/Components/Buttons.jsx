@@ -4,7 +4,7 @@ import { FiDelete, FiMinus } from 'react-icons/fi'
 const Buttons = () => {
   return (
     <div>
-        <div  className='text-white font-semibold text-3xl h-80 mt-4 '>
+        <div  className='text-white font-semibold text-3xl h-80 mt-9 '>
             <div className='w-80 mx-auto mt-3 h-14 grid grid-cols-4 gap-6'>
                 <button className='bg-[#303033] rounded-full cursor-pointer duration-300 text-[#ec6967] hover:shadow-[0_0px_20px_4px]'>C</button>
                 <button className='bg-[#303033] rounded-full cursor-pointer duration-300 text-[#ec6967] flex items-center justify-center hover:shadow-[0_0px_20px_4px]'><FiDelete/></button>

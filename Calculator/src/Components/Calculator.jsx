@@ -5,7 +5,7 @@ import Buttons from './Buttons'
 const Calculator = () => {
   return (
     <div>
-        <div className='bg-[#010101] rounded-lg h-130 w-90 p-5'>
+        <div className='bg-[#010101] border-white/60 border-2 shadow-[0_0_35px_5px] rounded-2xl h-135 w-90 p-5'>
             <div className='mb-5'>
                 <InputNum/>
             </div>
