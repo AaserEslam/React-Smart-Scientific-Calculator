@@ -5,9 +5,7 @@ import { CalculatorContext } from "./CalculatorContext";
 
 const Calculator = () => {
   const [inputBox, setInputBox] = useState("");
-  const [num1, setNum1] = useState(null);
-  const [num2, setNum2] = useState(null);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState('');
 
   return (
     <CalculatorContext.Provider
@@ -16,10 +14,6 @@ const Calculator = () => {
         setInputBox,
         result,
         setResult,
-        num1,
-        setNum1,
-        num2,
-        setNum2,
       }}
     >
       <div>
