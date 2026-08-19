@@ -25,21 +25,36 @@ const Buttons = () => {
     setResultBox("");
   };
 
+  const inputBrackets = () => {
+    const openCount = (inputBox.match(/\(/g) || []).length;
+    const closeCount = (inputBox.match(/\)/g) || []).length;
+    const lastChar = inputBox.slice(-1)
+
+    if(["+" , "-" , "÷" , "×" , "(" , ")"  ,  ""].includes(lastChar)){
+      setInputBox((v) => v + "(");
+    }
+    else if(openCount > closeCount && !isNaN(lastChar)){
+      setInputBox((v) => v + ")");
+    }
+
+  }
+
   const calcResult = () => {
-    const hasOperator = /[+\-*/%]/.test(inputBox);
-    if (!inputBox.trim() && !hasOperator) {
+    if (!inputBox.trim()) {
       setResultBox("");
       return;
     }
 
     try {
+    //? To Remove The Result Automaticly If There Isn't Any Operator
       const operator = ["+", "-", "×", "÷", "%"].some((op) =>
         inputBox.includes(op),
       );
       const sanitziedInput = inputBox
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
-        .replaceAll("%", "/100");
+        .replaceAll("%", "/100")
+        .replaceAll(")(", ")*(");
 
       const calculated = new Function(`return ${sanitziedInput}`)();
       if (isFinite(calculated) && operator) {
@@ -52,6 +67,9 @@ const Buttons = () => {
     }
   };
 
+  console.log(resultBox)
+  
+  console.log(resultBox);
   useEffect(() => {
     calcResult();
   }, [inputBox]);
@@ -165,7 +183,7 @@ const Buttons = () => {
         </div>
         <div className="w-80 mx-auto mt-3 h-14 grid grid-cols-4 gap-6">
           <button
-            onClick={() => ClickBtn("")}
+            onClick={() => inputBrackets()}
             className="bg-[#303033] rounded-full cursor-pointer hover:text-[#5cd4c3] duration-300 hover:shadow-[0_0px_20px_4px]"
           >
             ( )
