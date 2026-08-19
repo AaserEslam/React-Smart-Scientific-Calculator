@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { CalculatorContext } from "./CalculatorContext";
 
 const InputNum = () => {
-  const { inputBox, setInputBox, result, setResult, resultBox, setResultBox ,isCalculated, setIsCalculated} =
+  const { inputBox, setInputBox, resultBox, setResultBox } =
     useContext(CalculatorContext);
 
   return (

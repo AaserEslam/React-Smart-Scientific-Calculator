@@ -33,6 +33,7 @@ const Buttons = () => {
     }
 
     try {
+      const operator = ["+" , "-" ,"×", "÷" ,"%"].some(op => inputBox.includes(op))
       const sanitziedInput = inputBox
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
@@ -40,7 +41,10 @@ const Buttons = () => {
 
       const calculated = new Function(`return ${sanitziedInput}`)();
 
-      if (isFinite(calculated)) {
+      console.log(operator);
+      console.log(calculated);
+
+      if (isFinite(calculated) && operator) {
         setResultBox(String(calculated));
       } else {
         setResultBox("");
