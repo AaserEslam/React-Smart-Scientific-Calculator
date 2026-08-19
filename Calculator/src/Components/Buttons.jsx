@@ -4,8 +4,16 @@ import InputNum from "./InputNum";
 import { CalculatorContext } from "./CalculatorContext";
 
 const Buttons = () => {
-  const { inputBox, setInputBox, resultBox, setResultBox } =
-    useContext(CalculatorContext);
+  const {
+    inputBox,
+    setInputBox,
+    resultBox,
+    setResultBox,
+    resultList,
+    setResultList,
+    isPressed,
+    setIsPressed,
+  } = useContext(CalculatorContext);
 
   const ClickBtn = (value) => {
     setInputBox((v) => v + value);
@@ -20,24 +28,25 @@ const Buttons = () => {
     setResultBox("");
   };
 
-  const showResult = () => {
-    setInputBox(resultBox);
-    setResultBox("");
-  };
-
   const inputBrackets = () => {
     const openCount = (inputBox.match(/\(/g) || []).length;
     const closeCount = (inputBox.match(/\)/g) || []).length;
-    const lastChar = inputBox.slice(-1)
+    const lastChar = inputBox.slice(-1);
 
-    if(["+" , "-" , "÷" , "×" , "(" , ")"  ,  ""].includes(lastChar)){
+    if (["+", "-", "÷", "×", "(", ")", ""].includes(lastChar)) {
       setInputBox((v) => v + "(");
-    }
-    else if(openCount > closeCount && !isNaN(lastChar)){
+    } else if (openCount > closeCount && !isNaN(lastChar)) {
       setInputBox((v) => v + ")");
     }
+  };
 
-  }
+  const showResult = () => {
+    if (resultBox) {
+      setResultList((p) => [...p, `${inputBox} = ${resultBox}`]);
+      setInputBox(resultBox);
+      setResultBox("");
+    }
+  };
 
   const calcResult = () => {
     if (!inputBox.trim()) {
@@ -46,7 +55,7 @@ const Buttons = () => {
     }
 
     try {
-    //? To Remove The Result Automaticly If There Isn't Any Operator
+      //? To Remove The Result Automaticly If There Isn't Any Operator
       const operator = ["+", "-", "×", "÷", "%"].some((op) =>
         inputBox.includes(op),
       );
@@ -54,7 +63,7 @@ const Buttons = () => {
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
         .replaceAll("%", "/100")
-        .replaceAll(")(", ")*(")
+        .replace(")(", ")*(");
 
       const calculated = new Function(`return ${sanitziedInput}`)();
       if (isFinite(calculated) && operator) {
@@ -67,16 +76,32 @@ const Buttons = () => {
     }
   };
 
-  console.log(resultBox)
-  
-  console.log(resultBox);
   useEffect(() => {
     calcResult();
   }, [inputBox]);
 
+  useEffect(() => {
+    localStorage.setItem("results", JSON.stringify(resultList));
+  });
+
+
   return (
     <div>
-      <div className="text-white font-semibold text-3xl h-80 mt-9 ">
+      <div className="text-white font-semibold text-3xl h-80 mt-2 relative">
+        {/* History List */}
+        {isPressed && resultList != [] ? (
+          <div className="bg-amber-500 absolute left-0 w-66 h-84 rounded-bl-2xl overflow-y-auto text-right transition-all duration-300 ease-in-out">
+            <ul>
+              {resultList.map((r, index) => (
+                <li className="text-white" key={index}>
+                  {r}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          ""
+        )}
         <div className="w-80 mx-auto mt-3 h-14 grid grid-cols-4 gap-6">
           <button
             onClick={() => resetBtn()}
