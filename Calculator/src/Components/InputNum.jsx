@@ -17,7 +17,7 @@ const InputNum = () => {
           autoCapitalize="off"
           spellCheck="false"
           type="text"
-          className="transition-all duration-300 ease-in-out w-full h-25 outline-0 border-none  text-right text-white font-semibold text-5xl px-3"
+          className="transition-all duration-150 ease-in-out active:scale-95 w-full h-25 outline-0 border-none  text-right text-white font-semibold text-5xl px-3 scroll-smooth"
         />
       </div>
       <div>
