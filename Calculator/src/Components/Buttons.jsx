@@ -26,24 +26,22 @@ const Buttons = () => {
   };
 
   const calcResult = () => {
-    const hasOperator = /[+\-*/%]/.test(inputBox)
+    const hasOperator = /[+\-*/%]/.test(inputBox);
     if (!inputBox.trim() && !hasOperator) {
       setResultBox("");
       return;
     }
 
     try {
-      const operator = ["+" , "-" ,"×", "÷" ,"%"].some(op => inputBox.includes(op))
+      const operator = ["+", "-", "×", "÷", "%"].some((op) =>
+        inputBox.includes(op),
+      );
       const sanitziedInput = inputBox
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
         .replaceAll("%", "/100");
 
       const calculated = new Function(`return ${sanitziedInput}`)();
-
-      console.log(operator);
-      console.log(calculated);
-
       if (isFinite(calculated) && operator) {
         setResultBox(String(calculated));
       } else {
