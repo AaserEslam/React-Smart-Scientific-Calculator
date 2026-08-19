@@ -4,7 +4,7 @@ import InputNum from "./InputNum";
 import { CalculatorContext } from "./CalculatorContext";
 
 const Buttons = () => {
-  const { inputBox, setInputBox, result, setResult } =
+  const { inputBox, setInputBox, resultBox, setResultBox } =
     useContext(CalculatorContext);
 
   const ClickBtn = (value) => {
@@ -17,37 +17,42 @@ const Buttons = () => {
 
   const resetBtn = () => {
     setInputBox("");
-    setResult("");
+    setResultBox("");
   };
 
+  const showResult = () => {
+    setInputBox(resultBox);
+    setResultBox("");
+  };
 
   const calcResult = () => {
-    if(!inputBox.trim()){
-        setResult('')
-        return
+    const hasOperator = /[+\-*/%]/.test(inputBox)
+    if (!inputBox.trim() && !hasOperator) {
+      setResultBox("");
+      return;
     }
 
-    try{
-        const sanitziedInput = inputBox.replaceAll("×" , "*").replaceAll("÷" , "/").replaceAll("%" , "/100")
+    try {
+      const sanitziedInput = inputBox
+        .replaceAll("×", "*")
+        .replaceAll("÷", "/")
+        .replaceAll("%", "/100");
 
-        const calculated = new Function(`return ${sanitziedInput}`)()
+      const calculated = new Function(`return ${sanitziedInput}`)();
 
-        if(isFinite(calculated)){
-            setResult(String(calculated))
-        }
-        else{
-            setResult('')
-        }
-    }catch(error){
-        setResult('')
+      if (isFinite(calculated)) {
+        setResultBox(String(calculated));
+      } else {
+        setResultBox("");
+      }
+    } catch (error) {
+      setResultBox("");
     }
-  }
+  };
 
   useEffect(() => {
     calcResult();
   }, [inputBox]);
-
-  console.log(result);
 
   return (
     <div>
@@ -175,7 +180,10 @@ const Buttons = () => {
           >
             .
           </button>
-          <button className="bg-[#197e70] rounded-full cursor-pointer text-4xl  duration-300 hover:shadow-[0_0px_20px_4px_#81beb6]">
+          <button
+            onClick={() => showResult()}
+            className="bg-[#197e70] rounded-full cursor-pointer text-4xl  duration-300 hover:shadow-[0_0px_20px_4px_#81beb6]"
+          >
             =
           </button>
         </div>
