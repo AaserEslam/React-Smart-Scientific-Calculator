@@ -8,7 +8,7 @@ const InputNum = () => {
     resultBox,
     setResultBox,
     resultList,
-    setResultList,
+    setResultList,isPressedScientfic , setIsPressedScientfic
   } = useContext(CalculatorContext);
 
   return (
@@ -24,7 +24,7 @@ const InputNum = () => {
           autoCapitalize="off"
           spellCheck="false"
           type="text"
-          className={`transition-all duration-500 w-full h-25 outline-0 border-none tabular-nums text-right text-white font-semibold  px-3 scroll-smooth animate-[scale_0.2s_ease-in-out]  ${inputBox.length > 10 ? 'text-3xl' : 'text-5xl'}`}
+          className={` w-full h-25 outline-0 border-none tabular-nums text-right text-white font-semibold  px-3 scroll-smooth animate-[scale_0.15s_ease-in-out]  ${inputBox.length > 10 ? 'text-3xl' : 'text-5xl'} transition-all duration-500`}
         />
       </div>
       <div>

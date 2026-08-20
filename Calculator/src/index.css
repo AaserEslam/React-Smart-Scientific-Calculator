@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,200&display=swap');
 
 
 
@@ -9,10 +9,17 @@
     100% {transform: scale(1);}
 } */
 
+*{
+    font-family: "Google Sans Flex", sans-serif;
+    font-weight: 200;
+}
+
+
+
 
 
 @keyframes scale {
-    0% {transform: translateX(-14px);
+    0% {transform: translateX(-12px);
         transform: scale(0.9);
     }
     100% {transform: translateX(0);

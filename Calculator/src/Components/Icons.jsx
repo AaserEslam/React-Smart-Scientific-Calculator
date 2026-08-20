@@ -6,12 +6,16 @@ import { CalculatorContext } from "./CalculatorContext";
 import { PiCalculatorDuotone } from "react-icons/pi";
 
 const Icons = () => {
-  const { isPressedHistory, setIsPressedHistory, historyList, setHistoryList, history } =
+  const { isPressedHistory, setIsPressedHistory, historyList, setHistoryList, history , isPressedScientfic , setIsPressedScientfic} =
     useContext(CalculatorContext);
 
   const handleHistoryClick = () => {
     setIsPressedHistory(!isPressedHistory);
   };
+
+  const handleSciteficClick = () => {
+    setIsPressedScientfic(!isPressedScientfic)
+  }
 
   return (
     <div className="px-5">
@@ -30,7 +34,7 @@ const Icons = () => {
 
         <div className="flex items-center gap-4">
           <FaRuler className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
-          <TbSquareRoot className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
+          <TbSquareRoot onClick={() => handleSciteficClick()} className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
         </div>
       </div>
     </div>
