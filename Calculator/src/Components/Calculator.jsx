@@ -25,7 +25,7 @@ const Calculator = () => {
       }}
     >
       <div>
-        <div className="bg-[#010101] border-white/60 border-2 shadow-[0_0_35px_5px] rounded-2xl h-140 w-90 py-5">
+        <div className="bg-[#010101] border-white/60 overflow-hidden border-2 shadow-[0_0_35px_5px] rounded-2xl h-140 w-90 py-5">
           <div className="mb-3">
             <div className="text-white">
               <Icons />
