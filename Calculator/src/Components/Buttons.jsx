@@ -9,10 +9,8 @@ const Buttons = () => {
     setInputBox,
     resultBox,
     setResultBox,
-    resultList,
-    setResultList,
     isPressed,
-    setIsPressed,
+    setIsPressed,history,historyList, setHistoryList
   } = useContext(CalculatorContext);
 
   const ClickBtn = (value) => {
@@ -42,7 +40,7 @@ const Buttons = () => {
 
   const showResult = () => {
     if (resultBox) {
-      setResultList((p) => [...p, `${inputBox} = ${resultBox}`]);
+      setHistoryList((p) => [...p , history])
       setInputBox(resultBox);
       setResultBox("");
     }
@@ -77,7 +75,7 @@ const Buttons = () => {
   };
 
   const clearHistory = () => {
-    setResultList([])
+    setHistoryList([])
   }
 
   const addResultFromHistory = (view) => {
@@ -91,30 +89,31 @@ const Buttons = () => {
   }, [inputBox]);
 
   useEffect(() => {
-    localStorage.setItem("results", JSON.stringify(resultList));
+    localStorage.setItem("history", JSON.stringify(historyList));
   });
 
   return (
     <div>
       <div className="text-white font-semibold text-3xl h-80 mt-2 relative">
         {/* History List */}
-        {
-          <div className={`bg-[#010101]  absolute -left-67 ${isPressed && resultList.length > 0? 'left-0' : ''} opacity-100 ${isPressed? 'opacity-0' : ''} w-66 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-white/50`}>
+        
+          <div className={`bg-[#010101]  absolute -left-67 ${isPressed && historyList.length > 0? 'left-0' : ''} opacity-100 ${isPressed? 'opacity-0' : ''} w-66 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-white/50 px-1`}>
             <ul
-              className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full "
+              className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full"
             >
-              {resultList.map((r, index) => (
-                <li onClick={() => addResultFromHistory(r)} className="text-white text-2xl cursor-pointer  my-2 p-2" key={index}>
-                  {r}
-                </li>
-              ))}
+                {historyList.map((item , index) => (
+                  <div key={index} className="my-6">
+                    <li onClick={() => addResultFromHistory(item.input)} className="text-white  text-2xl cursor-pointer p-1">{item.input}</li>
+                    <li onClick={() => addResultFromHistory(item.result)} className="text-[#197e70]  text-2xl cursor-pointer p-1">{item.result}</li>
+                  </div>
+                ))}
             </ul>
             <div className="rounded-bl-2xl flex items-center justify-center py-2">
               <button onClick={() => clearHistory()} className="bg-[#696970] py-3 px-6 rounded-full my-2 text-sm w-40 cursor-pointer hover:scale-105 transition-all duration-400 active:scale-95">
                 Clear History
               </button>
             </div>
-          </div>}
+          </div>
         <div className="w-80 mx-auto mt-3 h-14 grid grid-cols-4 gap-6">
           <button
             onClick={() => resetBtn()}

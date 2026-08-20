@@ -8,8 +8,17 @@ import Icons from "./Icons";
 const Calculator = () => {
   const [inputBox, setInputBox] = useState("");
   const [resultBox, setResultBox] = useState("");
-  const [resultList, setResultList] = useState(localStorage.length > 0 ? JSON.parse(localStorage.getItem("results")) : []);
   const [isPressed, setIsPressed] = useState(false);
+  const [historyList , setHistoryList] = useState(
+    localStorage.length > 0 ? JSON.parse(localStorage.getItem("history")) : []
+  );
+
+
+    const history = {
+    input: inputBox,
+    result: resultBox,
+  };
+
 
   return (
     <CalculatorContext.Provider
@@ -18,10 +27,9 @@ const Calculator = () => {
         setInputBox,
         resultBox,
         setResultBox,
-        resultList,
-        setResultList,
         isPressed,
         setIsPressed,
+        history,historyList , setHistoryList
       }}
     >
       <div>

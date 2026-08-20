@@ -6,7 +6,7 @@ import { CalculatorContext } from './CalculatorContext';
 
 const Icons = () => {
 
-    const {isPressed, setIsPressed , resultList, setResultList} = useContext(CalculatorContext);
+    const {isPressed, setIsPressed ,historyList , setHistoryList , history} = useContext(CalculatorContext);
 
     const handleHistoryClick = () => {
         setIsPressed(!isPressed);
@@ -16,7 +16,7 @@ const Icons = () => {
   return (
     <div className='px-5'>
         <div className='flex items-center justify-between'>
-            <LiaHistorySolid onClick={() => handleHistoryClick()} className={`${resultList.length > 0 ? 'text-white' : 'text-gray-100/50'} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}/>
+            <LiaHistorySolid onClick={() => handleHistoryClick()} className={`${historyList.length > 0 ? 'text-white' : 'text-gray-100/50'} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}/>
             <div className='flex items-center gap-4'>
                 <FaRuler  className='text-2xl cursor-pointer transition-all duration-300 hover:scale-120'/>
                 <TbSquareRoot  className='text-2xl cursor-pointer transition-all duration-300 hover:scale-120'/>
