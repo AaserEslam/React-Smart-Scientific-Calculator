@@ -9,62 +9,63 @@ const Buttons = () => {
     setInputBox,
     resultBox,
     setResultBox,
-    isPressed,
-    setIsPressed,history,historyList, setHistoryList
+    isPressedHistory,
+    setIsPressedHistory,
+    history,
+    historyList,
+    setHistoryList,
   } = useContext(CalculatorContext);
 
   const ClickBtn = (value) => {
-    if(value === "."){
-      if(!inputBox){
-        setInputBox("0.")
+    if (value === ".") {
+      if (!inputBox) {
+        setInputBox("0.");
         return;
       }
 
-      const endWithOperator = /[+\-×÷]$/.test(inputBox)
-      if(endWithOperator){
-        setInputBox((v) => v + "0.")
+      const endWithOperator = /[+\-×÷]$/.test(inputBox);
+      if (endWithOperator) {
+        setInputBox((v) => v + "0.");
         return;
       }
-      const currentNumber = inputBox.split(/[+\-÷×(]/).pop()
-      if(!currentNumber.includes(".")){
-        setInputBox((v) => v + ".")
+      const currentNumber = inputBox.split(/[+\-÷×(]/).pop();
+      if (!currentNumber.includes(".")) {
+        setInputBox((v) => v + ".");
       }
-      return 
+      return;
+    }
 
-  }
-    
-
-    if(inputBox === "0"){
-      if(value === '0') return;
+    if (inputBox === "0") {
+      if (value === "0") return;
       setInputBox(value);
       return;
     }
 
-    const endWithOperatorZero = /[+\-×(]0$/.test(inputBox)
+    const endWithOperatorZero = /[+\-×(]0$/.test(inputBox);
 
-    if(endWithOperatorZero){
-      if(value === "0") return;
-      if(value === "."){
-        setInputBox(inputBox + ".")
-        return; 
+    if (endWithOperatorZero) {
+      if (value === "0") return;
+      if (value === ".") {
+        setInputBox(inputBox + ".");
+        return;
       }
-      setInputBox(inputBox.slice(0 , -1) + value)
+      setInputBox(inputBox.slice(0, -1) + value);
       return;
     }
 
-    setInputBox((v) => v + value)
+    setInputBox((v) => v + value);
   };
 
   const addOperator = (op) => {
-    if(!inputBox) return
-    const endWithOperator = /[+\-×÷]$/.test(inputBox)
-    if(endWithOperator){
-      setInputBox(inputBox.slice(0 , -1) + op);
+    if (!inputBox) return;
+    const endWithOperator = /[+\-×÷]$/.test(inputBox);
+    if (endWithOperator) {
+      setInputBox(inputBox.slice(0, -1) + op);
       return;
     }
 
-    setInputBox((o) => o + op)
-  }
+    setInputBox((o) => o + op);
+  };
 
   const deleteBtn = () => {
     setInputBox((v) => v.slice(0, -1));
@@ -89,7 +90,7 @@ const Buttons = () => {
 
   const showResult = () => {
     if (resultBox) {
-      setHistoryList((p) => [...p , history])
+      setHistoryList((p) => [...p, history]);
       setInputBox(resultBox);
       setResultBox("");
     }
@@ -124,14 +125,14 @@ const Buttons = () => {
   };
 
   const clearHistory = () => {
-    setHistoryList([])
-  }
+    setHistoryList([]);
+  };
 
   const addResultFromHistory = (view) => {
     setInputBox(view);
-    setResultBox('')
-    setIsPressed(false)
-  }
+    setResultBox("");
+    setIsPressedHistory(false);
+  };
 
   useEffect(() => {
     calcResult();
@@ -145,24 +146,38 @@ const Buttons = () => {
     <div>
       <div className="text-white font-semibold text-3xl h-80 mt-2 relative">
         {/* History List */}
-        
-          <div className={`bg-[#010101]  absolute -left-67 ${isPressed && historyList.length > 0? 'left-0' : ''} opacity-100 ${isPressed? 'opacity-0' : ''} w-66 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-white/50 px-1`}>
-            <ul
-              className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full"
+        <div
+          className={`bg-[#010101]  absolute -left-67 ${isPressedHistory && historyList.length > 0 ? "left-0" : ""} opacity-100 ${isPressedHistory ? "opacity-0" : ""} w-66 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-white/50 px-1`}
+        >
+          <ul className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full">
+            {historyList.map((item, index) => (
+              <div key={index} className="my-6">
+                <li
+                  onClick={() => addResultFromHistory(item.input)}
+                  className="text-white  text-2xl cursor-pointer p-1"
+                >
+                  {item.input}
+                </li>
+                <li
+                  onClick={() => addResultFromHistory(item.result)}
+                  className="text-[#197e70]  text-2xl cursor-pointer p-1"
+                >
+                  {item.result}
+                </li>
+              </div>
+            ))}
+          </ul>
+          <div className="rounded-bl-2xl flex items-center justify-center py-2">
+            <button
+              onClick={() => clearHistory()}
+              className="bg-[#696970] py-3 px-6 rounded-full my-2 text-sm w-40 cursor-pointer hover:scale-105 transition-all duration-400 active:scale-95"
             >
-                {historyList.map((item , index) => (
-                  <div key={index} className="my-6">
-                    <li onClick={() => addResultFromHistory(item.input)} className="text-white  text-2xl cursor-pointer p-1">{item.input}</li>
-                    <li onClick={() => addResultFromHistory(item.result)} className="text-[#197e70]  text-2xl cursor-pointer p-1">{item.result}</li>
-                  </div>
-                ))}
-            </ul>
-            <div className="rounded-bl-2xl flex items-center justify-center py-2">
-              <button onClick={() => clearHistory()} className="bg-[#696970] py-3 px-6 rounded-full my-2 text-sm w-40 cursor-pointer hover:scale-105 transition-all duration-400 active:scale-95">
-                Clear History
-              </button>
-            </div>
+              Clear History
+            </button>
           </div>
+        </div>
+
+        {/* Calculator Buttons */}
         <div className="w-80 mx-auto mt-3 h-14 grid grid-cols-4 gap-6">
           <button
             onClick={() => resetBtn()}

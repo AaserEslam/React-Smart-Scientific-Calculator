@@ -1,2 +1,21 @@
 @import "tailwindcss";
 
+
+
+
+/* @keyframes scale {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.05);}
+    100% {transform: scale(1);}
+} */
+
+
+
+@keyframes scale {
+    0% {transform: translateX(-14px);
+        transform: scale(0.9);
+    }
+    100% {transform: translateX(0);
+        opacity: 1;
+    transform: scale(1)}
+}

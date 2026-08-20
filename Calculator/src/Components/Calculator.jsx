@@ -8,17 +8,16 @@ import Icons from "./Icons";
 const Calculator = () => {
   const [inputBox, setInputBox] = useState("");
   const [resultBox, setResultBox] = useState("");
-  const [isPressed, setIsPressed] = useState(false);
-  const [historyList , setHistoryList] = useState(
-    localStorage.length > 0 ? JSON.parse(localStorage.getItem("history")) : []
+  const [isPressedHistory, setIsPressedHistory] = useState(false);
+  const [isPressedScientfic , setIsPressedScientfic] = useState(false)
+  const [historyList, setHistoryList] = useState(
+    localStorage.length > 0 ? JSON.parse(localStorage.getItem("history")) : [],
   );
 
-
-    const history = {
+  const history = {
     input: inputBox,
     result: resultBox,
   };
-
 
   return (
     <CalculatorContext.Provider
@@ -27,13 +26,15 @@ const Calculator = () => {
         setInputBox,
         resultBox,
         setResultBox,
-        isPressed,
-        setIsPressed,
-        history,historyList , setHistoryList
+        isPressedHistory,
+        setIsPressedHistory,
+        history,
+        historyList,
+        setHistoryList,
       }}
     >
       <div>
-        <div className="bg-[#010101] border-white/60 overflow-hidden border-2 shadow-[0_0_35px_5px] rounded-2xl h-140 w-90 py-5">
+        <div className="bg-[#010101] border-white/60 font-Inter  overflow-hidden border-2 shadow-[0_0_35px_5px] rounded-2xl h-140 w-90 py-5">
           <div className="mb-3">
             <div className="text-white">
               <Icons />

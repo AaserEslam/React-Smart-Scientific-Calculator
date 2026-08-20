@@ -1,29 +1,40 @@
-import React, { useContext } from 'react'
-import { FaRuler } from 'react-icons/fa';
+import React, { useContext } from "react";
+import { FaRuler } from "react-icons/fa";
 import { LiaHistorySolid } from "react-icons/lia";
-import { TbSquareRoot } from 'react-icons/tb';
-import { CalculatorContext } from './CalculatorContext';
+import { TbSquareRoot } from "react-icons/tb";
+import { CalculatorContext } from "./CalculatorContext";
+import { PiCalculatorDuotone } from "react-icons/pi";
 
 const Icons = () => {
+  const { isPressedHistory, setIsPressedHistory, historyList, setHistoryList, history } =
+    useContext(CalculatorContext);
 
-    const {isPressed, setIsPressed ,historyList , setHistoryList , history} = useContext(CalculatorContext);
-
-    const handleHistoryClick = () => {
-        setIsPressed(!isPressed);
-    }
-
+  const handleHistoryClick = () => {
+    setIsPressedHistory(!isPressedHistory);
+  };
 
   return (
-    <div className='px-5'>
-        <div className='flex items-center justify-between'>
-            <LiaHistorySolid onClick={() => handleHistoryClick()} className={`${historyList.length > 0 ? 'text-white' : 'text-gray-100/50'} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}/>
-            <div className='flex items-center gap-4'>
-                <FaRuler  className='text-2xl cursor-pointer transition-all duration-300 hover:scale-120'/>
-                <TbSquareRoot  className='text-2xl cursor-pointer transition-all duration-300 hover:scale-120'/>
-            </div>   
-        </div>     
-    </div>
-  )
-}
+    <div className="px-5">
+      <div className="flex items-center justify-between">
+        {isPressedHistory && historyList.length > 0 ? (
+          <PiCalculatorDuotone
+            onClick={() => handleHistoryClick()}
+            className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120"
+          />
+        ) : (
+          <LiaHistorySolid
+            onClick={() => handleHistoryClick()}
+            className={`${historyList.length > 0 ? "text-white" : "text-gray-100/50"} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}
+          />
+        )}
 
-export default Icons
+        <div className="flex items-center gap-4">
+          <FaRuler className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
+          <TbSquareRoot className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Icons;
