@@ -14,7 +14,35 @@ const Buttons = () => {
   } = useContext(CalculatorContext);
 
   const ClickBtn = (value) => {
-    setInputBox((v) => v + value);
+    if(value === "."){
+      setInputBox("0")
+    }
+
+    if(inputBox === "0"){
+      if(value === '0') return;
+      
+      if(value === "."){
+        setInputBox("0.")
+        return;
+      }
+      setInputBox(value);
+      return;
+      
+    }
+
+    const endWithOperatorZero = /[+\-×(]0$/.test(inputBox)
+
+    if(endWithOperatorZero){
+      if(value === "0") return;
+      if(value === "."){
+        setInputBox(inputBox + ".")
+        return; 
+      }
+      setInputBox(inputBox.slice(0 , -1) + value)
+      return;
+    }
+
+    setInputBox((v) => v + value)
   };
 
   const deleteBtn = () => {
