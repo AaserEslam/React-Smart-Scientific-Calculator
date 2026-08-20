@@ -15,19 +15,29 @@ const Buttons = () => {
 
   const ClickBtn = (value) => {
     if(value === "."){
-      setInputBox("0")
-    }
-
-    if(inputBox === "0"){
-      if(value === '0') return;
-      
-      if(value === "."){
+      if(!inputBox){
         setInputBox("0.")
         return;
       }
+
+      const endWithOperator = /[+\-×÷]$/.test(inputBox)
+      if(endWithOperator){
+        setInputBox((v) => v + "0.")
+        return;
+      }
+      const currentNumber = inputBox.split(/[+\-÷×(]/).pop()
+      if(!currentNumber.includes(".")){
+        setInputBox((v) => v + ".")
+      }
+      return 
+
+  }
+    
+
+    if(inputBox === "0"){
+      if(value === '0') return;
       setInputBox(value);
       return;
-      
     }
 
     const endWithOperatorZero = /[+\-×(]0$/.test(inputBox)
@@ -44,6 +54,17 @@ const Buttons = () => {
 
     setInputBox((v) => v + value)
   };
+
+  const addOperator = (op) => {
+    if(!inputBox) return
+    const endWithOperator = /[+\-×÷]$/.test(inputBox)
+    if(endWithOperator){
+      setInputBox(inputBox.slice(0 , -1) + op);
+      return;
+    }
+
+    setInputBox((o) => o + op)
+  }
 
   const deleteBtn = () => {
     setInputBox((v) => v.slice(0, -1));
@@ -156,13 +177,13 @@ const Buttons = () => {
             <FiDelete />
           </button>
           <button
-            onClick={() => ClickBtn("%")}
+            onClick={() => addOperator("%")}
             className="bg-[#303033] rounded-full cursor-pointer hover:text-[#5cd4c3] duration-300 hover:shadow-[0_0px_20px_4px] active:scale-85"
           >
             %
           </button>
           <button
-            onClick={() => ClickBtn("÷")}
+            onClick={() => addOperator("÷")}
             className="bg-[#696970] rounded-full cursor-pointer text-4xl hover:text-[#5cd4c3] duration-300 hover:shadow-[0_0px_20px_4px] active:scale-85"
           >
             ÷
@@ -188,7 +209,7 @@ const Buttons = () => {
             9
           </button>
           <button
-            onClick={() => ClickBtn("×")}
+            onClick={() => addOperator("×")}
             className="bg-[#696970] rounded-full cursor-pointer text-4xl hover:text-[#5cd4c3] duration-300 hover:shadow-[0_0px_20px_4px] active:scale-85"
           >
             ×
@@ -214,7 +235,7 @@ const Buttons = () => {
             6
           </button>
           <button
-            onClick={() => ClickBtn("-")}
+            onClick={() => addOperator("-")}
             className="bg-[#696970] rounded-full cursor-pointer text-3xl flex items-center justify-center hover:text-[#5cd4c3] hover:shadow-[0_0px_20px_4px] duration-300 active:scale-85"
           >
             <FiMinus />
@@ -240,7 +261,7 @@ const Buttons = () => {
             3
           </button>
           <button
-            onClick={() => ClickBtn("+")}
+            onClick={() => addOperator("+")}
             className="bg-[#696970] rounded-full cursor-pointer text-4xl hover:text-[#5cd4c3] duration-300 hover:shadow-[0_0px_20px_4px] active:scale-85"
           >
             +
