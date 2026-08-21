@@ -26,3 +26,27 @@
         opacity: 1;
     transform: scale(1)}
 }
+
+
+
+@layer components {
+  
+  .btn-sci {
+    @apply h-12 rounded-3xl bg-[#1b1f2a] text-[#b4c5e4] font-medium text-sm flex items-center justify-center active:scale-95 transition-all;
+  }
+
+  
+  .btn-num {
+    @apply h-14 rounded-3xl bg-[#17171c] text-white font-medium text-xl flex items-center justify-center active:scale-95 transition-all;
+  }
+
+  
+  .btn-op {
+    @apply h-14 rounded-3xl bg-[#21232d] text-white font-medium text-xl flex items-center justify-center active:scale-95 transition-all;
+  }
+
+  
+  .btn-equal {
+    @apply h-14 rounded-3xl bg-[#3b6cda] text-white font-semibold text-2xl flex items-center justify-center active:scale-95 transition-all;
+  }
+}
