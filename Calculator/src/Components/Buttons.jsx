@@ -1,9 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiDelete, FiMinus } from "react-icons/fi";
 import InputNum from "./InputNum";
 import { CalculatorContext } from "./CalculatorContext";
 import { HiOutlineSwitchHorizontal, HiSwitchHorizontal } from "react-icons/hi";
 import { TbSquareRoot } from "react-icons/tb";
+import { evaluate } from "mathjs";
 
 const Buttons = () => {
   const {
@@ -19,6 +20,9 @@ const Buttons = () => {
     isPressedScientfic,
     setIsPressedScientfic,
   } = useContext(CalculatorContext);
+
+  const [isRad, setIsRad] = useState(false);
+  console.log(isRad);
 
   const ClickBtn = (value) => {
     if (value === ".") {
@@ -92,6 +96,60 @@ const Buttons = () => {
     }
   };
 
+  const handleSci = (func) => {
+    switch (func) {
+      case "sin":
+      case "cos":
+      case "tan":
+      case "log":
+      case "ln":
+        setInputBox((p) => p + `${func}(`);
+        break;
+      case "√":
+        setInputBox((p) => p + "√(");
+        break;
+      case "π":
+        setInputBox((p) => p + "π");
+        break;
+      case "e":
+        setInputBox((p) => p + "e");
+        break;
+      case "fact":
+        setInputBox((p) => p + "!");
+        break;
+      case "| x |":
+        setInputBox((p) => p + "abs(");
+        break;
+      case "1÷":
+        if (inputBox !== "1÷") {
+          setInputBox((p) => p + "1÷");
+        }
+        break;
+      case "^(2)":
+        if (inputBox) {
+          setInputBox((p) => p + "^(2)");
+        }
+        break;
+      case "^(":
+        if (inputBox) {
+          setInputBox((p) => p + "^(");
+        }
+        break;
+      case "e^(":
+        setInputBox((p) => p + "e^(");
+        break;
+      case "(-":
+        if (inputBox !== "(-") {
+          setInputBox((p) => p + "(-");
+        } else {
+          return;
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   const showResult = () => {
     if (resultBox) {
       setHistoryList((p) => [...p, history]);
@@ -107,19 +165,60 @@ const Buttons = () => {
     }
 
     try {
-      //? To Remove The Result Automaticly If There Isn't Any Operator
-      const operator = ["+", "-", "×", "÷", "%"].some((op) =>
-        inputBox.includes(op),
-      );
-      const sanitziedInput = inputBox
+      const operator = [
+        "+",
+        "-",
+        "x",
+        "÷",
+        "%",
+        "sin",
+        "cos",
+        "tan",
+        "ln",
+        "log",
+        "sqrt",
+        "√",
+        "π",
+        "pi",
+        "abs",
+        "^(2)",
+        "e",
+        "e^(",
+        "^(",
+        "(-",
+        "1÷",
+      ].some((op) => inputBox.includes(op));
+
+      let sanitizedInput = inputBox
+        .replaceAll("x", "*")
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
         .replaceAll("%", "/100")
-        .replace(")(", ")*(");
 
-      const calculated = new Function(`return ${sanitziedInput}`)();
+        .replace(/√(\d+(\.\d+)?)/g, "sqrt($1)")
+        .replaceAll("√", "sqrt")
+
+        .replace(/(\d)\s*π/g, "$1*pi")
+        .replaceAll("π", "pi")
+        .replace(/ln\(/g, "log(");
+      const openBrackets = (sanitizedInput.match(/\(/g) || []).length;
+      const closeBrackets = (sanitizedInput.match(/\)/g) || []).length;
+      if (openBrackets > closeBrackets) {
+        sanitizedInput += ")".repeat(openBrackets - closeBrackets);
+      }
+
+      if (!isRad) {
+        sanitizedInput = sanitizedInput
+          .replace(/sin\(([^)]+)\)/g, "sin($1 deg)")
+          .replace(/cos\(([^)]+)\)/g, "cos($1 deg)")
+          .replace(/tan\(([^)]+)\)/g, "tan($1 deg)");
+      }
+
+      const calculated = evaluate(sanitizedInput);
+
       if (isFinite(calculated) && operator) {
-        setResultBox(String(calculated));
+        const finalResult = parseFloat(calculated.toFixed(10));
+        setResultBox(String(finalResult));
       } else {
         setResultBox("");
       }
@@ -140,17 +239,16 @@ const Buttons = () => {
 
   useEffect(() => {
     calcResult();
-  }, [inputBox]);
+  }, [inputBox, isRad]);
 
   useEffect(() => {
     localStorage.setItem("history", JSON.stringify(historyList));
   });
 
-const regularRowStyle = `grid grid-cols-4 gap-2 transition-all duration-300 ${
+  const regularRowStyle = `grid grid-cols-4 gap-2 transition-all duration-300 ${
     isPressedScientfic ? "h-8" : "h-14"
   }`;
 
-  // 2. تصغير الخط والإنكماش للأزرار العادية
   const numBtnStyle = `w-full h-full rounded-full bg-[#303033] text-white font-semibold cursor-pointer flex items-center justify-center active:scale-95 transition-all ${
     isPressedScientfic ? "text-sm" : "text-2xl"
   }`;
@@ -159,9 +257,7 @@ const regularRowStyle = `grid grid-cols-4 gap-2 transition-all duration-300 ${
     isPressedScientfic ? "text-sm" : "text-2xl"
   }`;
 
-  // 3. تقليل ارتفاع الأزرار العلمية أيضاً إلى h-7
   const sciBtnStyle = `w-full h-full rounded-full bg-[#21232d] text-[#b4c5e4] font-medium text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer`;
-
 
   return (
     <div>
@@ -198,86 +294,161 @@ const regularRowStyle = `grid grid-cols-4 gap-2 transition-all duration-300 ${
           </div>
         </div>
 
-        {/* Scitefic Buttons */}
-        
-<div className="w-80 mx-auto mt-2 flex flex-col justify-end transition-all duration-300">
-      
-      {/* الأزرار العلمية */}
-      <div
-        className={`flex flex-col gap-1.5 transition-all duration-300 ease-in-out transform origin-top overflow-hidden ${
-          isPressedScientfic
-            ? "max-h-96 opacity-100 translate-y-0 mb-2"
-            : "max-h-0 opacity-0 -translate-y-4 pointer-events-none"
-        }`}
-      >
-        <div className="grid grid-cols-4 gap-2 h-7">
-          <button onClick={() => handleSci?.("sin")} className={`${sciBtnStyle} flex justify-center items-center`}><HiOutlineSwitchHorizontal /></button>
-          <button onClick={() => handleSci?.("cos")} className={sciBtnStyle}>Rad</button>
-          <button onClick={() => handleSci?.("tan")} className={sciBtnStyle}><TbSquareRoot/></button>
-          <button onClick={() => handleSci?.("log")} className={sciBtnStyle}>| x |</button>
-        </div>
-        <div className="grid grid-cols-4 gap-2 h-7">
-          <button onClick={() => handleSci?.("sin")} className={sciBtnStyle}>sin</button>
-          <button onClick={() => handleSci?.("cos")} className={sciBtnStyle}>cos</button>
-          <button onClick={() => handleSci?.("tan")} className={sciBtnStyle}>tan</button>
-          <button onClick={() => handleSci?.("log")} className={sciBtnStyle}>π</button>
-        </div>
-        <div className="grid grid-cols-4 gap-2 h-7">
-          <button onClick={() => handleSci?.("ln")} className={sciBtnStyle}>ln</button>
-          <button onClick={() => handleSci?.("sqrt")} className={sciBtnStyle}>log</button>
-          <button onClick={() => addOperator("^")} className={sciBtnStyle}>1/x</button>
-          <button onClick={() => addOperator("(")} className={sciBtnStyle}>e</button>
-        </div>
-        <div className="grid grid-cols-4 gap-2 h-7">
-          <button onClick={() => addOperator(")")} className={sciBtnStyle}>e</button>
-          <button onClick={() => handleSci?.("pi")} className={sciBtnStyle}>x</button>
-          <button onClick={() => handleSci?.("e")} className={sciBtnStyle}>x</button>
-          <button onClick={() => handleSci?.("fact")} className={sciBtnStyle}>+/-</button>
-        </div>
-      </div>
+        <div className="w-80 mx-auto mt-2 flex flex-col justify-end transition-all duration-300">
+          {/* Scitefic Buttons */}
+          <div
+            className={`flex flex-col gap-1.5 transition-all duration-300 ease-in-out transform origin-top overflow-hidden ${
+              isPressedScientfic
+                ? "max-h-96 opacity-100 translate-y-0 mb-2"
+                : "max-h-0 opacity-0 -translate-y-4 pointer-events-none"
+            }`}
+          >
+            <div className="grid grid-cols-4 gap-2 h-7">
+              <button
+                className={`${sciBtnStyle} flex justify-center items-center`}
+              >
+                <HiOutlineSwitchHorizontal />
+              </button>
+              <button onClick={() => setIsRad(!isRad)} className={sciBtnStyle}>
+                {isRad ? "Deg" : "Rad"}
+              </button>
+              <button onClick={() => handleSci("√")} className={sciBtnStyle}>
+                <TbSquareRoot />
+              </button>
+              <button
+                onClick={() => handleSci("| x |")}
+                className={sciBtnStyle}
+              >
+                | x |
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2 h-7">
+              <button onClick={() => handleSci("sin")} className={sciBtnStyle}>
+                sin
+              </button>
+              <button onClick={() => handleSci("cos")} className={sciBtnStyle}>
+                cos
+              </button>
+              <button onClick={() => handleSci("tan")} className={sciBtnStyle}>
+                tan
+              </button>
+              <button onClick={() => handleSci("π")} className={sciBtnStyle}>
+                π
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2 h-7">
+              <button onClick={() => handleSci("ln")} className={sciBtnStyle}>
+                ln
+              </button>
+              <button onClick={() => handleSci("log")} className={sciBtnStyle}>
+                log
+              </button>
+              <button onClick={() => handleSci("1÷")} className={sciBtnStyle}>
+                1/x
+              </button>
+              <button onClick={() => handleSci("e")} className={sciBtnStyle}>
+                e
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2 h-7">
+              <button onClick={() => handleSci("e^(")} className={sciBtnStyle}>
+                e<sup>x</sup>
+              </button>
+              <button onClick={() => handleSci("^(2)")} className={sciBtnStyle}>
+                x<sup>2</sup>
+              </button>
+              <button onClick={() => handleSci("^(")} className={sciBtnStyle}>
+                x<sup>y</sup>
+              </button>
+              <button onClick={() => handleSci("(-")} className={sciBtnStyle}>
+                +/-
+              </button>
+            </div>
+          </div>
 
-      {/*Regular Buttons*/}
-      <div className={`flex flex-col transition-all duration-300 ${isPressedScientfic ? "gap-1.5" : "gap-3"}`}>
-        <div className={regularRowStyle}>
-          <button onClick={resetBtn} className={opBtnStyle}>C</button>
-          <button onClick={deleteBtn} className={opBtnStyle}><FiDelete /></button>
-          <button onClick={() => addOperator("%")} className={opBtnStyle}>%</button>
-          <button onClick={() => addOperator("÷")} className={opBtnStyle}>÷</button>
+          {/*Regular Buttons*/}
+          <div
+            className={`flex flex-col transition-all duration-300 ${isPressedScientfic ? "gap-1.5" : "gap-3"}`}
+          >
+            <div className={regularRowStyle}>
+              <button onClick={resetBtn} className={opBtnStyle}>
+                C
+              </button>
+              <button onClick={deleteBtn} className={opBtnStyle}>
+                <FiDelete />
+              </button>
+              <button onClick={() => addOperator("%")} className={opBtnStyle}>
+                %
+              </button>
+              <button onClick={() => addOperator("÷")} className={opBtnStyle}>
+                ÷
+              </button>
+            </div>
+
+            <div className={regularRowStyle}>
+              <button onClick={() => ClickBtn("7")} className={numBtnStyle}>
+                7
+              </button>
+              <button onClick={() => ClickBtn("8")} className={numBtnStyle}>
+                8
+              </button>
+              <button onClick={() => ClickBtn("9")} className={numBtnStyle}>
+                9
+              </button>
+              <button onClick={() => addOperator("×")} className={opBtnStyle}>
+                ×
+              </button>
+            </div>
+
+            <div className={regularRowStyle}>
+              <button onClick={() => ClickBtn("4")} className={numBtnStyle}>
+                4
+              </button>
+              <button onClick={() => ClickBtn("5")} className={numBtnStyle}>
+                5
+              </button>
+              <button onClick={() => ClickBtn("6")} className={numBtnStyle}>
+                6
+              </button>
+              <button onClick={() => addOperator("-")} className={opBtnStyle}>
+                -
+              </button>
+            </div>
+
+            <div className={regularRowStyle}>
+              <button onClick={() => ClickBtn("1")} className={numBtnStyle}>
+                1
+              </button>
+              <button onClick={() => ClickBtn("2")} className={numBtnStyle}>
+                2
+              </button>
+              <button onClick={() => ClickBtn("3")} className={numBtnStyle}>
+                3
+              </button>
+              <button onClick={() => addOperator("+")} className={opBtnStyle}>
+                +
+              </button>
+            </div>
+
+            <div className={regularRowStyle}>
+              <button onClick={() => inputBrackets()} className={numBtnStyle}>
+                ( )
+              </button>
+              <button onClick={() => ClickBtn("0")} className={numBtnStyle}>
+                0
+              </button>
+              <button onClick={() => ClickBtn(".")} className={numBtnStyle}>
+                .
+              </button>
+              <button
+                onClick={() => showResult()}
+                className={`w-full h-full rounded-full bg-[#3b6cda] text-white font-semibold cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}
+              >
+                =
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div className={regularRowStyle}>
-          <button onClick={() => ClickBtn("7")} className={numBtnStyle}>7</button>
-          <button onClick={() => ClickBtn("8")} className={numBtnStyle}>8</button>
-          <button onClick={() => ClickBtn("9")} className={numBtnStyle}>9</button>
-          <button onClick={() => addOperator("×")} className={opBtnStyle}>×</button>
-        </div>
-
-        <div className={regularRowStyle}>
-          <button onClick={() => ClickBtn("4")} className={numBtnStyle}>4</button>
-          <button onClick={() => ClickBtn("5")} className={numBtnStyle}>5</button>
-          <button onClick={() => ClickBtn("6")} className={numBtnStyle}>6</button>
-          <button onClick={() => addOperator("-")} className={opBtnStyle}>-</button>
-        </div>
-
-        <div className={regularRowStyle}>
-          <button onClick={() => ClickBtn("1")} className={numBtnStyle}>1</button>
-          <button onClick={() => ClickBtn("2")} className={numBtnStyle}>2</button>
-          <button onClick={() => ClickBtn("3")} className={numBtnStyle}>3</button>
-          <button onClick={() => addOperator("+")} className={opBtnStyle}>+</button>
-        </div>
-
-        <div className={regularRowStyle}>
-          <button onClick={() => inputBrackets()} className={numBtnStyle}>( )</button>
-          <button onClick={() => addOperator("0")} className={numBtnStyle}>0</button>
-          <button onClick={() => addOperator(".")} className={numBtnStyle}>.</button>
-          <button onClick={() => showResult()} className={`w-full h-full rounded-full bg-[#3b6cda] text-white font-semibold cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}>=</button>
-        </div>
-      </div>
-
-    </div>
-        
-
-        
       </div>
     </div>
   );
