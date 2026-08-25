@@ -26,7 +26,7 @@ const InputNum = () => {
           autoCapitalize="off"
           spellCheck="false"
           type="text"
-          className={` w-full h-25 outline-0 border-none tabular-nums text-right text-white font-semibold  px-3 scroll-smooth animate-[scale_0.15s_ease-in-out]  ${inputBox.length > 10 ? "text-3xl" : "text-5xl"} transition-all duration-500`}
+          className={` w-full h-25 outline-0 border-none tabular-nums text-right text-[#555] dark:text-white font-semibold  px-3 scroll-smooth animate-[scale_0.15s_ease-in-out]  ${inputBox.length > 10 ? "text-3xl" : "text-5xl"} transition-all duration-500`}
         />
       </div>
       <div>

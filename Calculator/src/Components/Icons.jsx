@@ -23,18 +23,18 @@ const Icons = () => {
         {isPressedHistory && historyList.length > 0 ? (
           <PiCalculatorDuotone
             onClick={() => handleHistoryClick()}
-            className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120"
+            className="text-2xl cursor-pointer text-[#1aacfe] transition-all duration-300 hover:scale-120"
           />
         ) : (
           <LiaHistorySolid
             onClick={() => handleHistoryClick()}
-            className={`${historyList.length > 0 ? "text-white" : "text-gray-100/50"} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}
+            className={`${historyList.length > 0 ? "text-[#1aacfe]" : "text-[#ade1ff]/70"} text-2xl cursor-pointer transition-all duration-300 hover:scale-120`}
           />
         )}
 
         <div className="flex items-center gap-4">
-          <FaRuler className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
-          <TbSquareRoot onClick={() => handleSciteficClick()} className="text-2xl cursor-pointer transition-all duration-300 hover:scale-120" />
+          <FaRuler className="text-2xl cursor-pointer transition-all duration-300 text-[#1aacfe] hover:scale-120" />
+          <TbSquareRoot onClick={() => handleSciteficClick()} className="text-2xl text-[#1aacfe] cursor-pointer transition-all duration-300 hover:scale-120" />
         </div>
       </div>
     </div>

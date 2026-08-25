@@ -240,55 +240,55 @@ const Buttons = () => {
 
   useEffect(() => {
     calcResult();
-  }, [inputBox, isRad]);
+  }, [inputBox , isRad]);
 
   useEffect(() => {
     localStorage.setItem("history", JSON.stringify(historyList));
   });
 
-  const regularRowStyle = `grid grid-cols-4 gap-2 transition-all duration-300 ${
+  const regularRowStyle = `grid grid-cols-4 gap-4 transition-all duration-300 ${
     isPressedScientfic ? "h-8" : "h-14"
   }`;
 
-  const numBtnStyle = `w-full h-full rounded-full bg-[#303033] text-white font-semibold cursor-pointer flex items-center justify-center active:scale-95 transition-all ${
+  const numBtnStyle = `w-full h-full rounded-full bg-white dark:bg-[#2f3133] dark:shadow-none text-[#42bffb] shadow-[0px_6px_5px_0px_#bec0c4] border-1 border-gray-400/30 dark:border-0 font-semibold cursor-pointer flex items-center justify-center active:scale-95 transition-all ${
     isPressedScientfic ? "text-sm" : "text-2xl"
   }`;
 
-  const opBtnStyle = `w-full h-full rounded-full bg-[#303033] text-[#ec6967] font-semibold cursor-pointer flex items-center justify-center active:scale-95 transition-all ${
+  const opBtnStyle = `w-full h-full rounded-full bg-[#ade1ff] dark:bg-[#025db3] text-[#42bffb] dark:shadow-none shadow-[0px_6px_5px_0px_#bec0c4] font-semibold cursor-pointer dark:border-0  flex items-center border-1 border-gray-400/30 justify-center active:scale-95 transition-all ${
     isPressedScientfic ? "text-sm" : "text-2xl"
   }`;
 
-  const sciBtnStyle = `w-full h-full rounded-full bg-[#21232d] text-[#b4c5e4] font-medium text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer`;
+  const sciBtnStyle = `w-full h-full rounded-full bg-[#21232d] text-[#b4c5e4] font-medium text-xs flex items-center  justify-center active:scale-95 transition-all cursor-pointer`;
 
   return (
     <div>
       <div className="text-white font-semibold text-3xl h-80 mt-2 relative">
         {/* History List */}
         <div
-          className={`bg-[#010101]  absolute z-50 -left-67 ${isPressedHistory && historyList.length > 0 ? "left-0" : ""} opacity-100 ${isPressedHistory ? "opacity-0" : ""} w-66 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-white/50 px-1`}
+          className={`bg-[#f6f8fc] dark:bg-[#17191a]  absolute z-50 -left-67 ${isPressedHistory && historyList.length > 0 ? "left-0" : ""} opacity-100 ${isPressedHistory ? "opacity-0" : ""} w-65 h-84 rounded-bl-2xl text-right transition-all duration-300 ease-in-out border-r-2 border-gray-300/40 px-1`}
         >
           <ul className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full">
             {historyList.map((item, index) => (
               <div key={index} className="my-6">
                 <li
                   onClick={() => addResultFromHistory(item.input)}
-                  className="text-white  text-2xl cursor-pointer p-1"
+                  className="text-[#555] dark:text-white  text-2xl cursor-pointer p-1"
                 >
                   {item.input}
                 </li>
                 <li
                   onClick={() => addResultFromHistory(item.result)}
-                  className="text-[#197e70]  text-2xl cursor-pointer p-1"
+                  className="text-[#1aacfe]  text-2xl cursor-pointer p-1"
                 >
                   {item.result}
                 </li>
               </div>
             ))}
           </ul>
-          <div className="rounded-bl-2xl flex items-center justify-center py-2">
+          <div className="rounded-bl-2xl flex  items-center justify-center py-2">
             <button
               onClick={() => clearHistory()}
-              className="bg-[#696970] py-3 px-6 rounded-full my-2 text-sm w-40 cursor-pointer hover:scale-105 transition-all duration-400 active:scale-95"
+              className="bg-[#1aacfe] shadow-[0px_0px_10px_4px_#7acdfb] ring-2 ring-blue-300 py-3 px-6 rounded-full my-2 text-sm w-40 cursor-pointer hover:scale-105 transition-all duration-400 active:scale-95"
             >
               Clear History
             </button>
@@ -298,7 +298,7 @@ const Buttons = () => {
         <div className="w-80 mx-auto mt-2 flex flex-col justify-end transition-all duration-300">
           {/* Scitefic Buttons */}
           <div
-            className={`flex flex-col gap-1.5 transition-all duration-300 ease-in-out transform origin-top overflow-hidden ${
+            className={`flex flex-col gap-2 transition-all duration-300 ease-in-out transform origin-top overflow-hidden ${
               isPressedScientfic
                 ? "max-h-96 opacity-100 translate-y-0 mb-2"
                 : "max-h-0 opacity-0 -translate-y-4 pointer-events-none"
@@ -372,10 +372,10 @@ const Buttons = () => {
             className={`flex flex-col transition-all duration-300 ${isPressedScientfic ? "gap-1.5" : "gap-3"}`}
           >
             <div className={regularRowStyle}>
-              <button onClick={resetBtn} className={opBtnStyle}>
+              <button onClick={resetBtn} className={`${opBtnStyle} text-red-400`}>
                 C
               </button>
-              <button onClick={deleteBtn} className={opBtnStyle}>
+              <button onClick={deleteBtn} className={`${opBtnStyle} text-red-400`}>
                 <FiDelete />
               </button>
               <button onClick={() => addOperator("%")} className={opBtnStyle}>
@@ -443,7 +443,7 @@ const Buttons = () => {
               </button>
               <button
                 onClick={() => showResult()}
-                className={`w-full h-full rounded-full bg-[#3b6cda] text-white font-semibold cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}
+                className={`w-full h-full rounded-full bg-[#1aacfe] text-white font-semibold shadow-[0px_0px_10px_4px_#7acdfb] ring-2 ring-blue-300 cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}
               >
                 =
               </button>
