@@ -22,7 +22,6 @@ const Buttons = () => {
   } = useContext(CalculatorContext);
 
   const [isRad, setIsRad] = useState(false);
-  console.log(isRad);
 
   const ClickBtn = (value) => {
     if (value === ".") {
@@ -168,8 +167,10 @@ const Buttons = () => {
       const operator = [
         "+",
         "-",
-        "x",
+        "*",
+        "/",
         "÷",
+        "×",
         "%",
         "sin",
         "cos",
@@ -190,7 +191,6 @@ const Buttons = () => {
       ].some((op) => inputBox.includes(op));
 
       let sanitizedInput = inputBox
-        .replaceAll("x", "*")
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
         .replaceAll("%", "/100")
@@ -219,6 +219,7 @@ const Buttons = () => {
       if (isFinite(calculated) && operator) {
         const finalResult = parseFloat(calculated.toFixed(10));
         setResultBox(String(finalResult));
+        console.log(finalResult);
       } else {
         setResultBox("");
       }
