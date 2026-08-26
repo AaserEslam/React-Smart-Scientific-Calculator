@@ -14,6 +14,9 @@ const Calculator = () => {
     localStorage.length > 0 ? JSON.parse(localStorage.getItem("history")) : [],
   );
 
+    
+
+
   const history = {
     input: inputBox,
     result: resultBox,
@@ -34,7 +37,7 @@ const Calculator = () => {
       }}
     >
       <div>
-        <div className={`bg-[#f6f8fc] dark:bg-[#17191a] font-Inter rounded-2xl h-140 w-87 py-5 overflow-hidden`}>
+        <div className={`bg-[#f6f8fc] dark:bg-[#17191a] font-Inter rounded-2xl h-140 w-87 py-5 border-2 border-[#c5d9e7] overflow-hidden shadow-[0px_0px_30px_1px_#666]`}>
           <div className="mb-3">
             <div className="text-white">
               <Icons />
