@@ -12,7 +12,6 @@ const Icons = () => {
     
   const element = document.documentElement
 
-  console.log(themeToggled);
 
   const handleHistoryClick = () => {
     setIsPressedHistory(!isPressedHistory);

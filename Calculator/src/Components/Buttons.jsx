@@ -22,6 +22,7 @@ const Buttons = () => {
   } = useContext(CalculatorContext);
 
   const [isRad, setIsRad] = useState(false);
+  const [isSwitched, setIsSwitched] = useState(false);
 
   const ClickBtn = (value) => {
     if (value === ".") {
@@ -102,6 +103,16 @@ const Buttons = () => {
       case "tan":
       case "log":
       case "ln":
+      case "asin":
+      case "acos":
+      case "atan":
+      case "sinh":
+      case "cosh":
+      case "tanh":
+      case "asinh":
+      case "acosh":
+      case "atanh":
+      case "cbrt":
         setInputBox((p) => p + `${func}(`);
         break;
       case "√":
@@ -113,36 +124,33 @@ const Buttons = () => {
       case "e":
         setInputBox((p) => p + "e");
         break;
-      case "fact":
-        setInputBox((p) => p + "!");
+      case "!":
+        if (inputBox) setInputBox((p) => p + "!");
         break;
       case "| x |":
+      case "abs":
         setInputBox((p) => p + "abs(");
         break;
       case "1÷":
-        if (inputBox !== "1÷") {
-          setInputBox((p) => p + "1÷");
-        }
+        setInputBox((p) => p + "1/");
         break;
       case "^(2)":
-        if (inputBox) {
-          setInputBox((p) => p + "^(2)");
-        }
+        if (inputBox) setInputBox((p) => p + "^(2)");
+        break;
+      case "^(3)":
+        if (inputBox) setInputBox((p) => p + "^(3)");
+        break;
+      case "2^(":
+        setInputBox((p) => p + "2^(");
         break;
       case "^(":
-        if (inputBox) {
-          setInputBox((p) => p + "^(");
-        }
+        if (inputBox) setInputBox((p) => p + "^(");
         break;
       case "e^(":
         setInputBox((p) => p + "e^(");
         break;
       case "(-":
-        if (inputBox !== "(-") {
-          setInputBox((p) => p + "(-");
-        } else {
-          return;
-        }
+        setInputBox((p) => p + "(-");
         break;
       default:
         break;
@@ -167,40 +175,49 @@ const Buttons = () => {
       const operator = [
         "+",
         "-",
-        "*",
-        "/",
-        "÷",
+        "x",
         "×",
+        "÷",
+        "/",
         "%",
         "sin",
         "cos",
         "tan",
+        "asin",
+        "acos",
+        "atan",
+        "sinh",
+        "cosh",
+        "tanh",
+        "asinh",
+        "acosh",
+        "atanh",
         "ln",
         "log",
         "sqrt",
+        "cbrt",
         "√",
         "π",
         "pi",
         "abs",
-        "^(2)",
+        "^",
         "e",
-        "e^(",
-        "^(",
-        "(-",
-        "1÷",
+        "!",
       ].some((op) => inputBox.includes(op));
 
       let sanitizedInput = inputBox
+        .replaceAll("x", "*")
         .replaceAll("×", "*")
         .replaceAll("÷", "/")
         .replaceAll("%", "/100")
-
+        .replaceAll("(-", "(-1*")
         .replace(/√(\d+(\.\d+)?)/g, "sqrt($1)")
         .replaceAll("√", "sqrt")
-
         .replace(/(\d)\s*π/g, "$1*pi")
         .replaceAll("π", "pi")
+        .replace(/(\d)\s*e/g, "$1*e")
         .replace(/ln\(/g, "log(");
+
       const openBrackets = (sanitizedInput.match(/\(/g) || []).length;
       const closeBrackets = (sanitizedInput.match(/\)/g) || []).length;
       if (openBrackets > closeBrackets) {
@@ -209,17 +226,28 @@ const Buttons = () => {
 
       if (!isRad) {
         sanitizedInput = sanitizedInput
-          .replace(/sin\(([^)]+)\)/g, "sin($1 deg)")
-          .replace(/cos\(([^)]+)\)/g, "cos($1 deg)")
-          .replace(/tan\(([^)]+)\)/g, "tan($1 deg)");
+
+          .replace(/(?<!a)sin\(([^)]+)\)/g, "sin($1 deg)")
+          .replace(/(?<!a)cos\(([^)]+)\)/g, "cos($1 deg)")
+          .replace(/(?<!a)tan\(([^)]+)\)/g, "tan($1 deg)");
+        console.log(sanitizedInput);
       }
 
-      const calculated = evaluate(sanitizedInput);
+      let calculated = evaluate(sanitizedInput);
+
+      if (!isRad && typeof calculated === "number") {
+        const hasInverseTrig = /(?<![a-z])(asin|acos|atan)(?![a-z])/i.test(
+          inputBox,
+        );
+
+        if (hasInverseTrig) {
+          calculated = (calculated * 180) / Math.PI;
+        }
+      }
 
       if (isFinite(calculated) && operator) {
-        const finalResult = parseFloat(calculated.toFixed(10));
+        const finalResult = parseFloat(calculated.toFixed(8));
         setResultBox(String(finalResult));
-        console.log(finalResult);
       } else {
         setResultBox("");
       }
@@ -240,7 +268,7 @@ const Buttons = () => {
 
   useEffect(() => {
     calcResult();
-  }, [inputBox , isRad]);
+  }, [inputBox, isRad]);
 
   useEffect(() => {
     localStorage.setItem("history", JSON.stringify(historyList));
@@ -269,7 +297,7 @@ const Buttons = () => {
         >
           <ul className="p-2 h-65 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#696970] [&::-webkit-scrollbar-thumb]:rounded-full">
             {historyList.map((item, index) => (
-              <div key={index} className="my-6">
+              <div key={index} className="mb-10">
                 <li
                   onClick={() => addResultFromHistory(item.input)}
                   className="text-[#555] dark:text-white  text-2xl cursor-pointer p-1"
@@ -306,6 +334,7 @@ const Buttons = () => {
           >
             <div className="grid grid-cols-4 gap-2 h-7">
               <button
+                onClick={() => setIsSwitched(!isSwitched)}
                 className={`${sciBtnStyle} flex justify-center items-center`}
               >
                 <HiOutlineSwitchHorizontal />
@@ -313,54 +342,189 @@ const Buttons = () => {
               <button onClick={() => setIsRad(!isRad)} className={sciBtnStyle}>
                 {isRad ? "Deg" : "Rad"}
               </button>
-              <button onClick={() => handleSci("√")} className={sciBtnStyle}>
-                <TbSquareRoot />
-              </button>
-              <button
-                onClick={() => handleSci("| x |")}
-                className={sciBtnStyle}
-              >
-                | x |
-              </button>
+
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("cbrt(")}
+                  className={sciBtnStyle}
+                >
+                  <sup>3</sup>
+                  <TbSquareRoot />
+                </button>
+              ) : (
+                <button onClick={() => handleSci("√")} className={sciBtnStyle}>
+                  <TbSquareRoot />
+                </button>
+              )}
+
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("2^(")}
+                  className={sciBtnStyle}
+                >
+                  2<sup>x</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("| x |")}
+                  className={sciBtnStyle}
+                >
+                  | x |
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-4 gap-2 h-7">
-              <button onClick={() => handleSci("sin")} className={sciBtnStyle}>
-                sin
-              </button>
-              <button onClick={() => handleSci("cos")} className={sciBtnStyle}>
-                cos
-              </button>
-              <button onClick={() => handleSci("tan")} className={sciBtnStyle}>
-                tan
-              </button>
-              <button onClick={() => handleSci("π")} className={sciBtnStyle}>
-                π
-              </button>
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("asin")}
+                  className={sciBtnStyle}
+                >
+                  sin<sup>-1</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("sin")}
+                  className={sciBtnStyle}
+                >
+                  sin
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("acos")}
+                  className={sciBtnStyle}
+                >
+                  cos<sup>-1</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("cos")}
+                  className={sciBtnStyle}
+                >
+                  cos
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("atan")}
+                  className={sciBtnStyle}
+                >
+                  tan<sup>-1</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("tan")}
+                  className={sciBtnStyle}
+                >
+                  tan
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("^(3)")}
+                  className={sciBtnStyle}
+                >
+                  x<sup>3</sup>
+                </button>
+              ) : (
+                <button onClick={() => handleSci("π")} className={sciBtnStyle}>
+                  π
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-4 gap-2 h-7">
-              <button onClick={() => handleSci("ln")} className={sciBtnStyle}>
-                ln
-              </button>
-              <button onClick={() => handleSci("log")} className={sciBtnStyle}>
-                log
-              </button>
-              <button onClick={() => handleSci("1÷")} className={sciBtnStyle}>
-                1/x
-              </button>
-              <button onClick={() => handleSci("e")} className={sciBtnStyle}>
-                e
-              </button>
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("sinh")}
+                  className={sciBtnStyle}
+                >
+                  sinh
+                </button>
+              ) : (
+                <button onClick={() => handleSci("ln")} className={sciBtnStyle}>
+                  ln
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("cosh")}
+                  className={sciBtnStyle}
+                >
+                  cosh
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("log")}
+                  className={sciBtnStyle}
+                >
+                  log
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("tanh")}
+                  className={sciBtnStyle}
+                >
+                  tanh
+                </button>
+              ) : (
+                <button onClick={() => handleSci("1÷")} className={sciBtnStyle}>
+                  1/x
+                </button>
+              )}
+              {isSwitched ? (
+                <button onClick={() => handleSci("!")} className={sciBtnStyle}>
+                  x!
+                </button>
+              ) : (
+                <button onClick={() => handleSci("e")} className={sciBtnStyle}>
+                  e
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-4 gap-2 h-7">
-              <button onClick={() => handleSci("e^(")} className={sciBtnStyle}>
-                e<sup>x</sup>
-              </button>
-              <button onClick={() => handleSci("^(2)")} className={sciBtnStyle}>
-                x<sup>2</sup>
-              </button>
-              <button onClick={() => handleSci("^(")} className={sciBtnStyle}>
-                x<sup>y</sup>
-              </button>
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("asinh")}
+                  className={sciBtnStyle}
+                >
+                  sinh<sup>-1</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("e^(")}
+                  className={sciBtnStyle}
+                >
+                  e<sup>x</sup>
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("acosh")}
+                  className={sciBtnStyle}
+                >
+                  cosh<sup>-1</sup>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleSci("^(2)")}
+                  className={sciBtnStyle}
+                >
+                  x<sup>2</sup>
+                </button>
+              )}
+              {isSwitched ? (
+                <button
+                  onClick={() => handleSci("atanh")}
+                  className={sciBtnStyle}
+                >
+                  tanh<sup>-1</sup>
+                </button>
+              ) : (
+                <button onClick={() => handleSci("^(")} className={sciBtnStyle}>
+                  x<sup>y</sup>
+                </button>
+              )}
               <button onClick={() => handleSci("(-")} className={sciBtnStyle}>
                 +/-
               </button>
@@ -443,7 +607,7 @@ const Buttons = () => {
               </button>
               <button
                 onClick={() => showResult()}
-                className={`w-full h-full rounded-2xl bg-[#0092ff] text-white font-semibold cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}
+                className={`w-full h-full rounded-2xl bg-[#0092ff] text-white border-2 border-white/70 dark:border-0 shadow-[0px_6px_5px_0px_#bec0c4] dark:shadow-none dark:inset-shadow-white/70 inset-shadow-sm font-semibold cursor-pointer active:scale-95 transition-all flex items-center justify-center ${isPressedScientfic ? "text-sm" : "text-2xl"}`}
               >
                 =
               </button>
